@@ -3,9 +3,6 @@
 #include <map>
 #include "tstack.h"
 
-TStack<char, 100> stack1;
-TStack<int, 100> stack2;
-
 int getPrior(char ch) {
     switch (ch) {
     case '(':
@@ -23,22 +20,8 @@ int getPrior(char ch) {
     }
 }
 
-int calculation(char ch) {
-    int operand2 = stack2.pop();
-    int operand1 = stack2.pop();
-    switch (ch) {
-    case '+':
-        return operand1 + operand2;
-    case '-':
-        return operand1 - operand2;
-    case '*':
-        return operand1 * operand2;
-    case '/':
-        return operand1 / operand2;
-    }
-}
-
 std::string infx2pstfx(std::string inf) {
+    TStack<char, 100> stack1;
     std::string result = "";
     for (int i = 0; i < inf.size(); i++) {
         if (isdigit(inf[i]) != 0) {
@@ -72,12 +55,28 @@ std::string infx2pstfx(std::string inf) {
 }
 
 int eval(std::string pref) {
+    TStack<int, 100> stack2;
     for (int i = 0; i < pref.size(); i++) {
         if (isdigit(pref[i]) != 0) {
             int number = pref[i] - '0';
             stack2.push(number);
         } else if (getPrior(pref[i]) == 2 || getPrior(pref[i]) == 3) {
-            stack2.push(calculation(pref[i]));
+            int operand2 = stack2.pop();
+            int operand1 = stack2.pop();
+            switch (pref[i]) {
+            case '+':
+                stack2.push(operand1 + operand2);
+                break;
+            case '-':
+                stack2.push(operand1 - operand2);
+                break;
+            case '*':
+                stack2.push(operand1 * operand2);
+                break;
+            case '/':
+                stack2.push(operand1 / operand2);
+                break;
+            }
         }
     }
     return stack2.pop();
