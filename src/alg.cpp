@@ -3,12 +3,82 @@
 #include <map>
 #include "tstack.h"
 
+TStack<char, 100> stack1;
+TStack<int, 100> stack2;
+
+int getPrior(char ch) {
+    switch (ch) {
+    case '(':
+        return 0;
+    case ')':
+        return 1;
+    case '+':
+        return 2;
+    case '-':
+        return 2;
+    case '*':
+        return 3;
+    case '/':
+        return 3;
+    }
+}
+
+int calculation(char ch) {
+    int operand2 = stack2.pop();
+    int operand1 = stack2.pop();
+    switch (ch) {
+    case '+':
+        return operand1 + operand2;
+    case '-':
+        return operand1 - operand2;
+    case '*':
+        return operand1 * operand2;
+    case '/':
+        return operand1 / operand2;
+    }
+}
+
 std::string infx2pstfx(std::string inf) {
-  // добавьте код
-  return std::string("");
+    std::string result = "";
+    for (int i = 0; i < inf.size(); i++) {
+        if (isdigit(inf[i]) != 0) {
+            result += inf[i];
+        } else if (getPrior(inf[i]) == 2 || getPrior(inf[i]) == 3) {
+            result += " ";
+            if (stack1.isEmpty() || getPrior(stack1.get()) == 0 || getPrior(inf[i]) > getPrior(stack1.get())) {
+                stack1.push(inf[i]);
+            } else if (getPrior(inf[i]) <= getPrior(stack1.get())) {
+                while (getPrior(inf[i]) <= getPrior(stack1.get())) {
+                    result += stack1.pop();
+                    result += " ";
+                }
+                stack1.push(inf[i]);
+            }
+        } else if (getPrior(inf[i]) == 0) {
+            stack1.push(inf[i]);
+        } else if (getPrior(inf[i]) == 1) {
+            while (getPrior(stack1.get()) != 0) {
+                result += " ";
+                result += stack1.pop();
+            }
+            stack1.pop();
+        }
+    }
+    while (!stack1.isEmpty()) {
+        result += " ";
+        result += stack1.pop();
+    }
+    return std::string(result);
 }
 
 int eval(std::string pref) {
-  // добавьте код
-  return 0;
+    for (int i = 0; i < pref.size(); i++) {
+        if (isdigit(pref[i]) != 0) {
+            int number = pref[i] - '0';
+            stack2.push(number);
+        } else if (getPrior(pref[i]) == 2 || getPrior(pref[i]) == 3) {
+            stack2.push(calculation(pref[i]));
+        }
+    }
+    return stack2.pop();
 }
