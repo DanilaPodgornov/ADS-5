@@ -33,6 +33,7 @@ class TStack {
     T pop() {
         if (isEmpty()) {
             std::cout << "Stack is Empty!" << "\n";
+            return -1;
         } else {
             return arr[top--];
         }
@@ -40,6 +41,7 @@ class TStack {
     T get() const {
         if (isEmpty()) {
             std::cout << "Stack is Empty!" << "\n";
+            return -1;
         } else {
             return arr[top];
         }
