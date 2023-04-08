@@ -17,6 +17,8 @@ int getPrior(char ch) {
         return 3;
     case '/':
         return 3;
+    default:
+        return 0;
     }
 }
 
@@ -28,7 +30,8 @@ std::string infx2pstfx(std::string inf) {
             result += inf[i];
         } else if (getPrior(inf[i]) == 2 || getPrior(inf[i]) == 3) {
             result += " ";
-            if (stack1.isEmpty() || getPrior(stack1.get()) == 0 || getPrior(inf[i]) > getPrior(stack1.get())) {
+            if (stack1.isEmpty() || getPrior(stack1.get()) == 0 ||
+                getPrior(inf[i]) > getPrior(stack1.get())) {
                 stack1.push(inf[i]);
             } else if (getPrior(inf[i]) <= getPrior(stack1.get())) {
                 while (getPrior(inf[i]) <= getPrior(stack1.get())) {
@@ -76,6 +79,8 @@ int eval(std::string pref) {
             case '/':
                 stack2.push(operand1 / operand2);
                 break;
+            default:
+                throw std::string("Unknown operation!");
             }
         }
     }
